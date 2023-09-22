@@ -14,26 +14,28 @@ CRF=20
 ###############################################################################
 # Parse arguments
 ###############################################################################
+# Presets ---------------------------------------------------------------------
+FNAME=""
 OVERWRITE='n'
 VERBOSE='error'
 FRATE='30'
 BPATH=~/Pictures/GoPro
 ANGLE="1440x1080"
 EXTENSION="JPG"
-FNAME=""
 DEBUG="False"
 # Help message ----------------------------------------------------------------
 print_usage() {
   printf "$CRED
   * Mandatory argument:
-    \t -f: Folder/File name 
+    \t -f: Folder/File name
   * Optional arguments:
     \t -p: Filepath (default: '~/Pictures/GoPro/')
     \t -r: Frame rate for output video (default: 30)
     \t -v: Verbose ('panic', 'warning', default: 'error')
   * Optional flags:
     \t -y: Overwrite present video files (off by default).
-    \t -w: Wide-angle fimelapse (linear by default).$COFF\n
+    \t -w: Wide-angle fimelapse (linear by default).
+    \t -d: Dev debugging flag to print inputs and skip run (off by default).$COFF\n
   "
 }
 # Parse optional arguments ----------------------------------------------------
@@ -99,6 +101,11 @@ cd $CDIR
 echo -e "${CGRN}[-] Postprocessing to: ${BPATH}/${FNAME}-PP.mp4 ${COFF}"
 ffmpeg -i $BPATH/$FNAME".mp4" \
     -vf "pp=al, scale=$ANGLE" $BPATH/$FNAME"-PP.mp4" \
+    -vcodec h264 \
     -loglevel $VERBOSE \
     -hide_banner  \
+    -crf $CRF \
+    -async 1 -vsync 1 \
+    -tune $TUNE \
+    -preset $PRESET \
     -$OVERWRITE
