@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-FNAME="LA_south"
+FNAME="Test"
 BPATH="/Users/sanchez.hmsc/Pictures/GoPro"
 FRATE=$((30))
 TLAPSE=$((1))
@@ -29,7 +29,8 @@ PRESET="slow"
 # Move files to same parent folder
 ###############################################################################
 echo -e "${CRED}* Moving files to parent directory from: ${BPATH}/${FNAME} ${COFF}"
-find "$BPATH"/"$FNAME" -mindepth 2 -type f -exec mv {} "$BPATH"/"$FNAME" \;
+find "$BPATH"/"$FNAME" -mindepth 2 -type f \
+    -exec mv {} "$BPATH"/"$FNAME" \;
 ###############################################################################
 # Generate video
 ###############################################################################
