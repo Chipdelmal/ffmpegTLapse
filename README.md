@@ -2,7 +2,7 @@
 
 These scripts generate timelapse videos from GoPro Session 5 photos. Please have a look at my [blogpost](https://chipdelmal.github.io/artsci/2023-09-21-TLapse.html) for more information and click on the following image for an example of a roadtrip timelapse compiled with this code!
 
-<center><a href="https://youtu.be/DbT7yxYrykI?si=60B5zxI0cndSbpGb"><img width="100%" src="chipdelmal.github.io/media/tlapse/snap.png"></a></center>
+<center><a href="https://youtu.be/DbT7yxYrykI?si=60B5zxI0cndSbpGb"><img width="100%" src="https://chipdelmal.github.io/media/tlapse/snap.png"></a></center>
 
 ## Instructions
 
