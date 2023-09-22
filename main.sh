@@ -1,61 +1,64 @@
 #!/bin/bash
 
-
-FNAME="Test"
-BPATH="/Users/sanchez.hmsc/Pictures/GoPro"
-FRATE=$((30))
-TLAPSE=$((1))
-OVW="True"
-
 ###############################################################################
-# Working directories
+# Constants and arguments
 ###############################################################################
-CDIR="$PWD"
-MDIR="${BPATH}/${FNAME}"
-###############################################################################
-# Constants
-###############################################################################
-CRED='\033[0;31m'
-CPRP='\033[0;35m'
-COFF='\033[0m' 
-# GoPro Constants -------------------------------------------------------------
-ANG_WIDE="1920x1080"
-ANG_LINR="1440x1080"
-EXTENSION="JPG"
-# FFMPEG ----------------------------------------------------------------------
-TUNE="film"
-PRESET="slow"
+. constants.env
+source ./functions.sh
+# Parse optional arguments ----------------------------------------------------
+while getopts 'dhywv:r:p:f:' flag; do
+  case "${flag}" in
+    y) OVERWRITE='y' ;;
+    p) BPATH="${OPTARG}" ;;
+    f) FNAME="${OPTARG}" ;;
+    v) VERBOSE="${OPTARG}" ;;
+    r) FRATE="${OPTARG}" ;;
+    w) ANGLE="1920x1080" ;;
+    d) DEBUG="True" ;;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
+# Check for debug and missing filename ----------------------------------------
+if [ "$DEBUG" = "True" ]; then print_debug; exit 0; fi
+if [ "$FNAME" = "" ]; then print_filename; exit 0; fi
 ###############################################################################
 # Move files to same parent folder
 ###############################################################################
-echo -e "${CRED}* Moving files to parent directory from: ${BPATH}/${FNAME} ${COFF}"
-find "$BPATH"/"$FNAME" -mindepth 2 -type f \
-    -exec mv {} "$BPATH"/"$FNAME" \;
+echo -e "${CGRN}[-] Moving files to parent directory from: ${BPATH}/${FNAME} ${COFF}"
+find $BPATH/$FNAME -mindepth 2 -type f \
+    -exec mv {} $BPATH/$FNAME \;
 ###############################################################################
 # Generate video
 ###############################################################################
-echo -e "${CRED}* Compiling video to: ${BPATH}/${FNAME}.mp4 ${COFF}"
+echo -e "${CGRN}[-] Compiling video to: ${BPATH}/${FNAME}.mp4 ${COFF}"
+CDIR="$PWD"
+MDIR="${BPATH}/${FNAME}"
 cd $MDIR
-ffmpeg -pattern_type glob -i "*.JPG" \
+ffmpeg -framerate $FRATE \
+    -pattern_type glob -i "*.$EXTENSION" \
+    -vcodec h264 $BPATH/$FNAME".mp4" \
     -r $FRATE \
-    -s $ANG_LINR \
     -tune $TUNE \
     -preset $PRESET \
-    -vcodec h264 "${BPATH}/${FNAME}.mp4" \
-    -hide_banner -loglevel error \
-    -y 
+    -hide_banner  \
+    -loglevel $VERBOSE \
+    -c:v libx264 \
+    -crf $CRF \
+    -async 1 -vsync 1 \
+    -$OVERWRITE
 cd $CDIR
 ###############################################################################
 # Postprocess video
 ###############################################################################
-echo -e "${CRED}* Postprocessing to: ${BPATH}/${FNAME}-PP.mp4 ${COFF}"
-ffmpeg -i "${BPATH}/${FNAME}.mp4" \
-    -vf pp=al "${BPATH}/${FNAME}-PP.mp4" \
-    -hide_banner -loglevel error \
-    -y
-###############################################################################
-# Timer calculation
-###############################################################################
-# FNUM=$(($(find $MDIR -name "*.JPG" -type f | wc -l)))
-# echo -e "${CRED}* Calculating timer variables ${COFF}"
-# echo -e "${CPRP}\t - ${FNUM} frames at a ${TLAPSE} second timing ${COFF}"
+echo -e "${CGRN}[-] Postprocessing to: ${BPATH}/${FNAME}-PP.mp4 ${COFF}"
+ffmpeg -i $BPATH/$FNAME".mp4" \
+    -vf "pp=al, scale=$ANGLE" $BPATH/$FNAME"-PP.mp4" \
+    -vcodec h264 \
+    -loglevel $VERBOSE \
+    -hide_banner  \
+    -crf $CRF \
+    -async 1 -vsync 1 \
+    -tune $TUNE \
+    -preset $PRESET \
+    -$OVERWRITE
