@@ -45,6 +45,7 @@ Different paths can be provided with this `-p` flag, and additional flags for th
 [-f] Foldername: Base name of the folder in which the ___GOPRO folders containing the images are stored (REQUIRED)
 [-p] Path: Path in which our base folder is located (default: ~/Pictures/GoPro)
 [-y] Overwrite: Overwrite existing files (off by default)
+[-u] Upside-down: Rotate 180 degrees and flip the video (off by default)
 [-v] Verbose: Print ffmpeg processing messages ('panic', 'warning', default: 'error')
 [-r] Framerate: Framerate for the timelapse video (default: 30)
 [-w] Angle: If provided, uses 1920x1080 resolution for wide angle, instead of 1440x1080 (off by default)

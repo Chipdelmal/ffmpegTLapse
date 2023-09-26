@@ -6,7 +6,7 @@
 . constants.env
 source ./functions.sh
 # Parse optional arguments ----------------------------------------------------
-while getopts 'dhywv:r:p:f:' flag; do
+while getopts 'dhuywv:r:p:f:' flag; do
   case "${flag}" in
     y) OVERWRITE='y' ;;
     p) BPATH="${OPTARG}" ;;
@@ -15,6 +15,7 @@ while getopts 'dhywv:r:p:f:' flag; do
     r) FRATE="${OPTARG}" ;;
     w) ANGLE="1920x1080" ;;
     d) DEBUG="True" ;;
+    u) ROTATE="True" ;;
     *) print_usage
        exit 1 ;;
   esac
@@ -22,6 +23,7 @@ done
 # Check for debug and missing filename ----------------------------------------
 if [ "$DEBUG" = "True" ]; then print_debug; exit 0; fi
 if [ "$FNAME" = "" ]; then print_filename; exit 0; fi
+if [ "$ROTATE" = "True" ] ; then ROTATE_FLAGS=",transpose=2, transpose=2"; fi
 ###############################################################################
 # Move files to same parent folder
 ###############################################################################
@@ -53,7 +55,7 @@ cd $CDIR
 ###############################################################################
 echo -e "${CGRN}[-] Postprocessing to: ${BPATH}/${FNAME}-PP.mp4 ${COFF}"
 ffmpeg -i $BPATH/$FNAME".mp4" \
-    -vf "pp=al, scale=$ANGLE" $BPATH/$FNAME"-PP.mp4" \
+    -vf "pp=al, scale=$ANGLE $ROTATE_FLAGS" $BPATH/$FNAME"-PP.mp4" \
     -vcodec h264 \
     -loglevel $VERBOSE \
     -hide_banner  \
