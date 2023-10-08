@@ -13,7 +13,7 @@ while getopts 'dhuywv:r:p:f:' flag; do
     f) FNAME="${OPTARG}" ;;
     v) VERBOSE="${OPTARG}" ;;
     r) FRATE="${OPTARG}" ;;
-    w) ANGLE="1920x1080" ;;
+    w) ANGLE="3840x2160" ;;
     d) DEBUG="True" ;;
     u) ROTATE="True" ;;
     *) print_usage
